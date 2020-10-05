@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * @ClassName RecruitData03Server
@@ -55,8 +56,15 @@ public class RecruitData03Server implements CommandLineRunner {
         //整理X轴　　Y轴
         jobMap.forEach((s, integer) -> {
             timeList.add(s);
-            numList.add(integer);
         });
+        timeList.sort((o1, o2) -> {
+            Date d1 = DateTime.of(o1,"yyyy-MM-dd");
+            Date d2 = DateTime.of(o2, "yyyy-MM-dd");
+            if ((d1.getTime() - d2.getTime()) > 0)
+                return 1;
+            return -1;
+        });
+        timeList.stream().forEach(s -> numList.add(jobMap.get(s)));
         ans.put("timeline",timeList);
         ans.put("nums",numList);
         return ans;
@@ -76,7 +84,7 @@ public class RecruitData03Server implements CommandLineRunner {
         return jobSalaryMap;
     }
     public void ReadExcel03(){
-        System.out.println("开始读取文件");
+        log.info("开始读取文件");
         String fileName = env.getProperty("sly.data.job");
         ExcelReader excelReader = null;
         try {
