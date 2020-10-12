@@ -22,7 +22,7 @@ import java.util.Map;
  **/
 @Controller
 @RequestMapping("data")
-@CrossOrigin(origins = "http://localhost:63343")
+@CrossOrigin
 public class DataController extends AbstractController{
 
     @Autowired
