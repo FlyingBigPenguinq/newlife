@@ -11,12 +11,12 @@ import lombok.Data;
  **/
 @Data
 public class KeyModel {
-    private String key;
+    private String name;
     private Integer value;
 
-    public KeyModel(String key, Integer value) {
+    public KeyModel(String name, Integer value) {
         super();
-        this.key = key;
+        this.name = name;
         this.value = value;
     }
 }

@@ -4,10 +4,13 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.fastjson.JSON;
 import com.study.boot.Data.dto.LineChartEntity;
+import com.study.boot.Data.dto.LineChartEntity02;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @ClassName LineChartListener
@@ -16,9 +19,9 @@ import java.util.*;
  * @Date 2020/10/3
  * @Version V1.0
  **/
-public class LineChartListener extends AnalysisEventListener<LineChartEntity> {
+public class Data02ChartListener extends AnalysisEventListener<LineChartEntity02> {
 
-    private static Logger log = LoggerFactory.getLogger(LineChartListener.class);
+    private static Logger log = LoggerFactory.getLogger(Data02ChartListener.class);
 
     private Map<Date, Integer> mainMap = new HashMap<>();
 
@@ -27,7 +30,8 @@ public class LineChartListener extends AnalysisEventListener<LineChartEntity> {
     private Map<String, Integer> jobSalaryMap = new HashMap<>();
 
     @Override
-    public void invoke(LineChartEntity lineChartEntity, AnalysisContext analysisContext) {
+    public void invoke(LineChartEntity02 lineChartEntity, AnalysisContext analysisContext) {
+        log.info("解析到一条数据：{}", JSON.toJSONString(lineChartEntity));
         try {
             //处理主页折线图的逻辑
             String comNum = lineChartEntity.getComNum();
@@ -72,33 +76,37 @@ public class LineChartListener extends AnalysisEventListener<LineChartEntity> {
     }
 
     private Integer convertSalary(String str){
-        if (str.contains("-")) {
-            String salary = str.replace("k", "000");
-            String h = salary.split("-")[0];
-            String t = salary.split("-")[1];
-            return (Integer.parseInt(t) + Integer.parseInt(h))/2;
-        }else {
-            // null 的话则不出处理数据
-            return null;
+        int m = 1;
+        int mo = 1000;
+        if (str.contains("万")){
+            mo = 10000;
         }
+        if (str.contains("/年")) {
+            m = 12;
+        }
+        str.replace("/年","").replace("/月", "");
+        String[] salary = str.split("-");
+        Integer get = Integer.parseInt(salary[0]) + Integer.parseInt(salary[1]);
+        return (get/2)*mo/m;
     }
+
 
     private void insertSalary(final Integer salary){
         if (salary == null){
             return;
         }
         if (salary <= 5000){
-            salaryMapAdd("[0,5000]");
+            salaryMapAdd("salary<= 5000");
         }else if ( salary>5000 && salary <= 12000){
-            salaryMapAdd("(5000,12000]");
+            salaryMapAdd("5000 < salary <= 12000");
         }else if (salary > 12000 && salary <= 25000){
-            salaryMapAdd("(12000,25000]");
+            salaryMapAdd("12000 < salary <= 25000");
         }else if (salary > 25000 && salary <=35000){
-            salaryMapAdd("(25000,35000]");
+            salaryMapAdd("25000 < salary <= 35000");
         }else if (salary > 35000 && salary <= 55000){
-            salaryMapAdd("(35000,80000]");
+            salaryMapAdd("35000 < salary <= 80000");
         }else {
-            salaryMapAdd("大于80000");
+            salaryMapAdd("salary > 80000");
         }
     }
    /**
