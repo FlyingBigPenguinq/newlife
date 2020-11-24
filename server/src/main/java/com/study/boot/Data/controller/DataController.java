@@ -40,12 +40,9 @@ public class DataController extends AbstractController{
     @RequestMapping(value = "test", method = RequestMethod.GET)
     public BaseResponse test(){
         BaseResponse baseResponse = new BaseResponse(StatusCode.Success);
-
         try {
-            Map<String, Integer> data = new HashMap<>();
-            data.put("jobCount",100);
-            data.put("salaryCount",5000);
-            baseResponse.setData(data);
+            System.out.println("进来了");
+            baseResponse.setData("请求成功");
         }catch (Exception e){
             baseResponse = new BaseResponse(StatusCode.Fail.getCode(),e.getMessage());
         }
